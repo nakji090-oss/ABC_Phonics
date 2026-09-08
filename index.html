@@ -5,14 +5,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>파닉스 A to Z</title>
     
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3771/3771278.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/3771/3771278.png">
+    <!-- 아이콘 설정 (제시해주신 플랫아이콘 주소 적용) -->
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2964/2964514.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/2964/2964514.png">
     
+    <!-- PWA 및 모바일 웹앱 필수 설정 -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#ffcc00">
+    <meta name="theme-color" content="#ffcc00"> <!-- 테마 색상을 파닉스 톤에 맞춤 -->
     
+    <!-- 💡 선생님께서 주신 manifest.json 형식을 Data URI로 완벽하게 내장 -->
     <link rel="manifest" href="data:application/manifest+json,{
         %22name%22:%22우리아이 파닉스%22,
         %22short_name%22:%22파닉스%22,
@@ -20,12 +23,18 @@
         %22display%22:%22standalone%22,
         %22background_color%22:%22#f9f9f9%22,
         %22theme_color%22:%22#ffcc00%22,
-        %22icons%22:[{
-            %22src%22:%22https://cdn-icons-png.flaticon.com/512/3771/3771278.png%22,
-            %22sizes%22:%22512x512%22,
-            %22type%22:%22image/png%22,
-            %22purpose%22:%22any maskable%22
-        }]
+        %22icons%22:[
+            {
+                %22src%22:%22https://cdn-icons-png.flaticon.com/512/2964/2964514.png%22,
+                %22sizes%22:%22192x192%22,
+                %22type%22:%22image/png%22
+            },
+            {
+                %22src%22:%22https://cdn-icons-png.flaticon.com/512/2964/2964514.png%22,
+                %22sizes%22:%22512x512%22,
+                %22type%22:%22image/png%22
+            }
+        ]
     }">
 
     <style>
@@ -94,7 +103,7 @@
 
             const a = document.createElement('a');
             
-            // 💡 요청하신 새로운 링크 형식으로 변경되었습니다. (숫자 2 위치에 ${i} 변수 적용)
+            // 링크 형식 유지
             a.href = `https://www.youtube.com/watch?app=desktop&v=iDZlQwjJvVw&list=PL9CB949BhBAhVWqjLQxTnGfyZNT7K669W&index=${i}&pp=iAQB`;
             a.className = 'btn';
             
@@ -106,18 +115,17 @@
             currentLetterCount++; 
         }
 
+        // 💡 선생님께서 주신 sw.js 로직을 Blob 형태로 내장하여 자동 등록
         if ('serviceWorker' in navigator) {
             const swCode = `
-                self.addEventListener('install', (e) => self.skipWaiting());
-                self.addEventListener('activate', (e) => self.clients.claim());
-                self.addEventListener('fetch', (e) => {
-                    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-                });
+                self.addEventListener('install', (e) => console.log('파닉스 앱 설치 준비 완료'));
+                self.addEventListener('fetch', (e) => {});
             `;
             const blob = new Blob([swCode], {type: 'application/javascript'});
             const swUrl = URL.createObjectURL(blob);
             
             navigator.serviceWorker.register(swUrl)
+                .then(() => console.log('내장형 서비스 워커 등록 성공'))
                 .catch((err) => console.log('서비스 워커 등록 실패:', err));
         }
     </script>
