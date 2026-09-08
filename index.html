@@ -2,9 +2,38 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 스마트폰 화면에 딱 맞게 확대/축소 고정 (앱처럼 보이게) -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>파닉스 A to Z</title>
-    <link rel="manifest" href="manifest.json">
+    
+    <!-- 1. 외부 링크를 이용한 아이콘 설정 (선생님 방식 적용!) -->
+    <!-- 여기서는 귀여운 알파벳 'ABC' 블록 아이콘 이미지를 주소로 가져왔습니다 -->
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3771/3771278.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/3771/3771278.png">
+    
+    <!-- 2. 모바일 웹앱 모드 활성화 및 상단 바 색상 지정 -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#ffcc00">
+    
+    <!-- 3. manifest.json 파일을 외부가 아닌 Data URI 형태로 코드 안에 내장 -->
+    <!-- 이렇게 하면 manifest.json 파일을 따로 만들 필요가 없습니다! -->
+    <link rel="manifest" href="data:application/manifest+json,{
+        %22name%22:%22우리아이 파닉스%22,
+        %22short_name%22:%22파닉스%22,
+        %22start_url%22:%22.%22,
+        %22display%22:%22standalone%22,
+        %22background_color%22:%22#f9f9f9%22,
+        %22theme_color%22:%22#ffcc00%22,
+        %22icons%22:[{
+            %22src%22:%22https://cdn-icons-png.flaticon.com/512/3771/3771278.png%22,
+            %22sizes%22:%22512x512%22,
+            %22type%22:%22image/png%22,
+            %22purpose%22:%22any maskable%22
+        }]
+    }">
+
     <style>
         body { 
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; 
@@ -12,12 +41,15 @@
             background-color: #f9f9f9; 
             margin: 0; 
             padding: 20px; 
+            /* 아이폰 하단 홈바 영역 확보 */
+            padding-bottom: env(safe-area-inset-bottom, 20px); 
         }
-        h1 { color: #333; font-size: 24px; margin-bottom: 20px; }
+        h1 { color: #333; font-size: 24px; margin-bottom: 20px; font-weight: 800; }
         .grid { 
             display: grid; 
             grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); 
             gap: 15px; 
+            margin-bottom: 20px;
         }
         .btn {
             display: flex; 
@@ -26,58 +58,78 @@
             background-color: #ffcc00; 
             color: #333; 
             text-decoration: none;
-            font-size: 22px; /* Aa 두 글자가 들어가므로 폰트 크기를 살짝 조절했습니다 */
-            font-weight: bold; 
+            font-size: 22px; 
+            font-weight: 900; 
             border-radius: 16px;
             height: 75px; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.1s;
+            transition: transform 0.1s, background-color 0.2s;
         }
         .btn:active { transform: scale(0.95); background-color: #e6b800; }
+        
+        /* 앱 설치 안내 메시지 디자인 */
+        .install-guide {
+            margin-top: 30px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            font-size: 14px;
+            color: #666;
+            text-align: left;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
     <h1>🔤 파닉스 Aa to Zz</h1>
+    
     <div class="grid" id="button-container"></div>
 
+    <div class="install-guide">
+        <strong>📱 일반 앱처럼 사용하시려면?</strong><br>
+        브라우저 메뉴(점 3개 또는 공유 버튼)에서 <b>[홈 화면에 추가]</b>를 누르시면 바탕화면에 아이콘이 생성됩니다!
+    </div>
+
     <script>
+        // --- 1. A~Z 버튼 자동 생성 로직 ---
         const container = document.getElementById('button-container');
         const playlistId = 'PL9CB949BhBAhVWqjLQxTnGfyZNT7K669W';
-
-        // 선생님께서 알려주신 제외할 영상 번호 목록
         const excludedIndices = [11, 12, 16, 20, 21, 25, 29, 30, 35];
-        
-        let currentLetterCount = 0; // 알파벳 순서를 추적 (0=A, 25=Z)
+        let currentLetterCount = 0; 
 
-        // 2번부터 37번까지 순회
         for (let i = 2; i <= 37; i++) {
-            // 제외할 번호 목록에 현재 번호가 있다면 건너뜀
-            if (excludedIndices.includes(i)) {
-                continue;
-            }
-
-            // Zz(26개)까지만 만들고 반복 종료
-            if (currentLetterCount > 25) {
-                break;
-            }
+            if (excludedIndices.includes(i)) continue;
+            if (currentLetterCount > 25) break;
 
             const a = document.createElement('a');
             a.href = `https://www.youtube.com/watch?list=${playlistId}&index=${i}`;
             a.className = 'btn';
             
-            // 대문자와 소문자 쌍 만들기 (예: 0일 때 'A'와 'a')
             const upper = String.fromCharCode(65 + currentLetterCount);
             const lower = String.fromCharCode(97 + currentLetterCount);
-            a.innerText = `${upper}${lower}`; // "Aa", "Bb" 형태로 표시
+            a.innerText = `${upper}${lower}`; 
             
             container.appendChild(a);
-            
-            currentLetterCount++; // 다음 알파벳으로 넘어감
+            currentLetterCount++; 
         }
 
-        // PWA 서비스 워커 등록
+        // --- 2. 초간단 서비스 워커 등록 (sw.js 파일 없이 코드 안에서 해결!) ---
+        // 코드를 데이터 URI로 변환하여 브라우저에 가상의 sw.js를 심어주는 고급 기법입니다.
         if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js');
+            const swCode = `
+                self.addEventListener('install', (e) => self.skipWaiting());
+                self.addEventListener('activate', (e) => self.clients.claim());
+                self.addEventListener('fetch', (e) => {
+                    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
+                });
+            `;
+            const blob = new Blob([swCode], {type: 'application/javascript'});
+            const swUrl = URL.createObjectURL(blob);
+            
+            navigator.serviceWorker.register(swUrl)
+                .then(() => console.log('서비스 워커가 성공적으로 등록되었습니다.'))
+                .catch((err) => console.log('서비스 워커 등록 실패:', err));
         }
     </script>
 </body>
