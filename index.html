@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>파닉스 A to Z</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body { 
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; 
+            text-align: center; 
+            background-color: #f9f9f9; 
+            margin: 0; 
+            padding: 20px; 
+        }
+        h1 { color: #333; font-size: 24px; margin-bottom: 20px; }
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); 
+            gap: 15px; 
+        }
+        .btn {
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            background-color: #ffcc00; 
+            color: #333; 
+            text-decoration: none;
+            font-size: 22px; /* Aa 두 글자가 들어가므로 폰트 크기를 살짝 조절했습니다 */
+            font-weight: bold; 
+            border-radius: 16px;
+            height: 75px; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.1s;
+        }
+        .btn:active { transform: scale(0.95); background-color: #e6b800; }
+    </style>
+</head>
+<body>
+    <h1>🔤 파닉스 Aa to Zz</h1>
+    <div class="grid" id="button-container"></div>
+
+    <script>
+        const container = document.getElementById('button-container');
+        const playlistId = 'PL9CB949BhBAhVWqjLQxTnGfyZNT7K669W';
+
+        // 선생님께서 알려주신 제외할 영상 번호 목록
+        const excludedIndices = [11, 12, 16, 20, 21, 25, 29, 30, 35];
+        
+        let currentLetterCount = 0; // 알파벳 순서를 추적 (0=A, 25=Z)
+
+        // 2번부터 37번까지 순회
+        for (let i = 2; i <= 37; i++) {
+            // 제외할 번호 목록에 현재 번호가 있다면 건너뜀
+            if (excludedIndices.includes(i)) {
+                continue;
+            }
+
+            // Zz(26개)까지만 만들고 반복 종료
+            if (currentLetterCount > 25) {
+                break;
+            }
+
+            const a = document.createElement('a');
+            a.href = `https://www.youtube.com/watch?list=${playlistId}&index=${i}`;
+            a.className = 'btn';
+            
+            // 대문자와 소문자 쌍 만들기 (예: 0일 때 'A'와 'a')
+            const upper = String.fromCharCode(65 + currentLetterCount);
+            const lower = String.fromCharCode(97 + currentLetterCount);
+            a.innerText = `${upper}${lower}`; // "Aa", "Bb" 형태로 표시
+            
+            container.appendChild(a);
+            
+            currentLetterCount++; // 다음 알파벳으로 넘어감
+        }
+
+        // PWA 서비스 워커 등록
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
