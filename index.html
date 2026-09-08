@@ -2,23 +2,17 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <!-- 스마트폰 화면에 딱 맞게 확대/축소 고정 (앱처럼 보이게) -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>파닉스 A to Z</title>
     
-    <!-- 1. 외부 링크를 이용한 아이콘 설정 (선생님 방식 적용!) -->
-    <!-- 여기서는 귀여운 알파벳 'ABC' 블록 아이콘 이미지를 주소로 가져왔습니다 -->
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3771/3771278.png">
     <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/3771/3771278.png">
     
-    <!-- 2. 모바일 웹앱 모드 활성화 및 상단 바 색상 지정 -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#ffcc00">
     
-    <!-- 3. manifest.json 파일을 외부가 아닌 Data URI 형태로 코드 안에 내장 -->
-    <!-- 이렇게 하면 manifest.json 파일을 따로 만들 필요가 없습니다! -->
     <link rel="manifest" href="data:application/manifest+json,{
         %22name%22:%22우리아이 파닉스%22,
         %22short_name%22:%22파닉스%22,
@@ -41,7 +35,6 @@
             background-color: #f9f9f9; 
             margin: 0; 
             padding: 20px; 
-            /* 아이폰 하단 홈바 영역 확보 */
             padding-bottom: env(safe-area-inset-bottom, 20px); 
         }
         h1 { color: #333; font-size: 24px; margin-bottom: 20px; font-weight: 800; }
@@ -67,7 +60,6 @@
         }
         .btn:active { transform: scale(0.95); background-color: #e6b800; }
         
-        /* 앱 설치 안내 메시지 디자인 */
         .install-guide {
             margin-top: 30px;
             padding: 15px;
@@ -92,9 +84,7 @@
     </div>
 
     <script>
-        // --- 1. A~Z 버튼 자동 생성 로직 ---
         const container = document.getElementById('button-container');
-        const playlistId = 'PL9CB949BhBAhVWqjLQxTnGfyZNT7K669W';
         const excludedIndices = [11, 12, 16, 20, 21, 25, 29, 30, 35];
         let currentLetterCount = 0; 
 
@@ -103,7 +93,9 @@
             if (currentLetterCount > 25) break;
 
             const a = document.createElement('a');
-            a.href = `https://www.youtube.com/watch?list=${playlistId}&index=${i}`;
+            
+            // 💡 요청하신 새로운 링크 형식으로 변경되었습니다. (숫자 2 위치에 ${i} 변수 적용)
+            a.href = `https://www.youtube.com/watch?app=desktop&v=iDZlQwjJvVw&list=PL9CB949BhBAhVWqjLQxTnGfyZNT7K669W&index=${i}&pp=iAQB`;
             a.className = 'btn';
             
             const upper = String.fromCharCode(65 + currentLetterCount);
@@ -114,8 +106,6 @@
             currentLetterCount++; 
         }
 
-        // --- 2. 초간단 서비스 워커 등록 (sw.js 파일 없이 코드 안에서 해결!) ---
-        // 코드를 데이터 URI로 변환하여 브라우저에 가상의 sw.js를 심어주는 고급 기법입니다.
         if ('serviceWorker' in navigator) {
             const swCode = `
                 self.addEventListener('install', (e) => self.skipWaiting());
@@ -128,7 +118,6 @@
             const swUrl = URL.createObjectURL(blob);
             
             navigator.serviceWorker.register(swUrl)
-                .then(() => console.log('서비스 워커가 성공적으로 등록되었습니다.'))
                 .catch((err) => console.log('서비스 워커 등록 실패:', err));
         }
     </script>
