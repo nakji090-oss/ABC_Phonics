@@ -5,17 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>파닉스 A to Z</title>
     
-    <!-- 아이콘 설정 (제시해주신 플랫아이콘 주소 적용) -->
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2964/2964514.png">
     <link rel="icon" type="image/png" sizes="192x192" href="https://cdn-icons-png.flaticon.com/512/2964/2964514.png">
     
-    <!-- PWA 및 모바일 웹앱 필수 설정 -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#ffcc00"> <!-- 테마 색상을 파닉스 톤에 맞춤 -->
+    <meta name="theme-color" content="#ffcc00">
     
-    <!-- 💡 선생님께서 주신 manifest.json 형식을 Data URI로 완벽하게 내장 -->
     <link rel="manifest" href="data:application/manifest+json,{
         %22name%22:%22우리아이 파닉스%22,
         %22short_name%22:%22파닉스%22,
@@ -24,75 +21,44 @@
         %22background_color%22:%22#f9f9f9%22,
         %22theme_color%22:%22#ffcc00%22,
         %22icons%22:[
-            {
-                %22src%22:%22https://cdn-icons-png.flaticon.com/512/2964/2964514.png%22,
-                %22sizes%22:%22192x192%22,
-                %22type%22:%22image/png%22
-            },
-            {
-                %22src%22:%22https://cdn-icons-png.flaticon.com/512/2964/2964514.png%22,
-                %22sizes%22:%22512x512%22,
-                %22type%22:%22image/png%22
-            }
+            {%22src%22:%22https://cdn-icons-png.flaticon.com/512/2964/2964514.png%22,%22sizes%22:%22192x192%22,%22type%22:%22image/png%22},
+            {%22src%22:%22https://cdn-icons-png.flaticon.com/512/2964/2964514.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}
         ]
     }">
 
     <style>
-        body { 
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif; 
-            text-align: center; 
-            background-color: #f9f9f9; 
-            margin: 0; 
-            padding: 20px; 
-            padding-bottom: env(safe-area-inset-bottom, 20px); 
-        }
+        body { font-family: 'Pretendard', sans-serif; text-align: center; background-color: #f9f9f9; margin: 0; padding: 20px; padding-bottom: env(safe-area-inset-bottom, 20px); }
         h1 { color: #333; font-size: 24px; margin-bottom: 20px; font-weight: 800; }
-        .grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); 
-            gap: 15px; 
-            margin-bottom: 20px;
-        }
-        .btn {
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
-            background-color: #ffcc00; 
-            color: #333; 
-            text-decoration: none;
-            font-size: 22px; 
-            font-weight: 900; 
-            border-radius: 16px;
-            height: 75px; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.1s, background-color 0.2s;
-        }
-        .btn:active { transform: scale(0.95); background-color: #e6b800; }
         
-        .install-guide {
-            margin-top: 30px;
-            padding: 15px;
-            background-color: #fff;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-            font-size: 14px;
-            color: #666;
-            text-align: left;
-            line-height: 1.5;
+        /* 🚨 설치 버튼 디자인 (처음엔 숨겨둠) */
+        #install-btn {
+            display: none; 
+            background-color: #ff6b6b; color: white; border: none; padding: 15px 30px; 
+            font-size: 18px; font-weight: bold; border-radius: 30px; margin: 0 auto 20px auto; 
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.4); cursor: pointer; width: 80%; max-width: 300px;
         }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(75px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .btn { display: flex; align-items: center; justify-content: center; background-color: #ffcc00; color: #333; text-decoration: none; font-size: 22px; font-weight: 900; border-radius: 16px; height: 75px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s; }
+        .btn:active { transform: scale(0.95); background-color: #e6b800; }
+        .install-guide { margin-top: 30px; padding: 15px; background-color: #fff; border-radius: 12px; font-size: 14px; color: #666; text-align: left; }
     </style>
 </head>
 <body>
     <h1>🔤 파닉스 Aa to Zz</h1>
     
+    <!-- 안드로이드 전용 설치 버튼 (조건 만족 시 나타남) -->
+    <button id="install-btn">📲 앱으로 설치하기</button>
+    
     <div class="grid" id="button-container"></div>
 
-    <div class="install-guide">
-        <strong>📱 일반 앱처럼 사용하시려면?</strong><br>
-        브라우저 메뉴(점 3개 또는 공유 버튼)에서 <b>[홈 화면에 추가]</b>를 누르시면 바탕화면에 아이콘이 생성됩니다!
+    <div class="install-guide" id="ios-guide">
+        <strong>📱 아이폰(iOS) 사용자 안내</strong><br>
+        브라우저 메뉴(공유 버튼)에서 <b>[홈 화면에 추가]</b>를 누르시면 바탕화면에 일반 앱처럼 아이콘이 생성됩니다.
     </div>
 
     <script>
+        // 1. 유튜브 버튼 생성
         const container = document.getElementById('button-container');
         const excludedIndices = [11, 12, 16, 20, 21, 25, 29, 30, 35];
         let currentLetterCount = 0; 
@@ -102,8 +68,6 @@
             if (currentLetterCount > 25) break;
 
             const a = document.createElement('a');
-            
-            // 링크 형식 유지
             a.href = `https://www.youtube.com/watch?app=desktop&v=iDZlQwjJvVw&list=PL9CB949BhBAhVWqjLQxTnGfyZNT7K669W&index=${i}&pp=iAQB`;
             a.className = 'btn';
             
@@ -115,19 +79,49 @@
             currentLetterCount++; 
         }
 
-        // 💡 선생님께서 주신 sw.js 로직을 Blob 형태로 내장하여 자동 등록
+        // 2. 서비스 워커 등록
         if ('serviceWorker' in navigator) {
             const swCode = `
-                self.addEventListener('install', (e) => console.log('파닉스 앱 설치 준비 완료'));
+                self.addEventListener('install', (e) => self.skipWaiting());
                 self.addEventListener('fetch', (e) => {});
             `;
             const blob = new Blob([swCode], {type: 'application/javascript'});
             const swUrl = URL.createObjectURL(blob);
-            
-            navigator.serviceWorker.register(swUrl)
-                .then(() => console.log('내장형 서비스 워커 등록 성공'))
-                .catch((err) => console.log('서비스 워커 등록 실패:', err));
+            navigator.serviceWorker.register(swUrl);
         }
+
+        // 3. 🚨 '진짜 앱 설치' 팝업 호출 로직 (안드로이드 전용)
+        let deferredPrompt;
+        const installBtn = document.getElementById('install-btn');
+        const iosGuide = document.getElementById('ios-guide');
+
+        // 브라우저가 앱 설치가 가능하다고 판단하면 이 이벤트가 발생합니다.
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // 브라우저 자체의 기본 설치 안내 팝업을 막고
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // 우리가 만든 [📲 앱으로 설치하기] 버튼을 화면에 보여줍니다.
+            installBtn.style.display = 'block';
+            iosGuide.style.display = 'none'; // 안드로이드이므로 아이폰 안내는 숨김
+        });
+
+        // 사용자가 [앱으로 설치하기] 버튼을 눌렀을 때
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                // 시스템에 진짜 설치 팝업을 띄우라고 명령
+                deferredPrompt.prompt();
+                
+                // 사용자가 설치를 수락했는지 확인
+                const { outcome } = await deferredPrompt.userChoice;
+                if (outcome === 'accepted') {
+                    console.log('앱 설치가 수락되었습니다.');
+                }
+                deferredPrompt = null;
+                // 설치 버튼 숨기기
+                installBtn.style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html>
